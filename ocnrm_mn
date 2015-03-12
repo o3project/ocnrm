@@ -1,0 +1,89 @@
+#!/bin/sh -
+
+DIR=$(dirname $0)
+JAVA=java
+
+RM_JAR=$DIR/ocnrm-1.0.0.jar
+RM_BIN_COMP_MNG_JAVA_ARGS=$DIR/OCNRM.properties
+
+TMP=/var/tmp
+RM_COMPJ_PID_FILE=$TMP/rm_java.pid
+
+start_rm_java_comp_mgr()
+{
+    if check_pid_file $RM_COMPJ_PID_FILE; then
+    echo "ocnrm is already running"
+    return 1
+    fi
+    $JAVA -jar $RM_JAR $RM_BIN_COMP_MNG_JAVA_ARGS &
+    echo $! > $RM_COMPJ_PID_FILE
+}
+
+start_rm()
+{
+    start_rm_java_comp_mgr
+}
+
+stop_rm()
+{
+    if check_pid_file $RM_COMPJ_PID_FILE; then
+    kill `cat $RM_COMPJ_PID_FILE` > /dev/null 2>&1
+    unlink $RM_COMPJ_PID_FILE     > /dev/null 2>&1
+    else
+    echo "ocnrm is not running"
+    fi
+}
+
+check_pid_file()
+{
+    pid_file=$1
+    if [ -f $pid_file ];then
+    pid=`cat $pid_file`
+    kill -0 $pid > /dev/null 2>&1
+    else
+    return 1
+    fi
+}
+
+rm_status()
+{
+    if check_pid_file $RM_COMPJ_PID_FILE; then
+    echo "ocnrm is running"
+    else
+    echo "ocnrm is not running"
+    fi
+}
+
+
+show_help()
+{
+    echo >&2 "usage : $0 [-qrsS]"
+    echo >&2 "  -q stop rm"
+    echo >&2 "  -r restart rm"
+    echo >&2 "  -s start rm"
+    echo >&2 "  -S rm status"
+}
+
+# check command args.
+if [ $# -lt 1 ]; then
+    show_help
+    exit 1
+fi
+
+while getopts 'qrsS' OPTION
+do
+    case $OPTION in
+    "q")
+        stop_rm ;;
+    "r")
+        stop_rm
+        start_rm ;;
+    "s")
+        start_rm ;;
+    "S")
+        rm_status ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
