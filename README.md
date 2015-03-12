@@ -1,67 +1,60 @@
-README
-==========================
+# what's OCNRM
+"Opt-transport apps of O3 orchestrator&amp;controller suite"
+---
+OCNRM(Optical Core Network Resource Manager) is a software which achieves Software Defined Networking in OTN/WDM network.
+OCNRM works with ODENOS, PseudoMF(PseudoManagementFunctions) and RYU-OE(RYU OTN Extension), and control OTN/WDM network nodes which support OpenFlow OTN extension.
 
- Software Installation
+ Environment
 --------------------------
-[Install jdk1.7, maven, and set proxy for maven.]
+OS：Ubuntu 12.04.3(x64)  
+Memory: 1GB (without ODENOS)  
+Middleware: Java 7 and later, Maven2  
+ODENOS 1.0.0 is required  
 
- Build OCNRM
+
+ Build
 --------------------------
 
+    $ cd ~
+    $ git clone https://github.com/o3project/ocnrm.git
     $ bash ./buld.sh
-    $ cd ./target
-    $ cp -p ./ocnrm-1.0.0-bin.tar.gz PATH/TO/INSTALL/DIR
-    $ cd PATH/TO/INSTALL/DIR
-    $ tar xvfz ./ocnrm-1.0.0-bin.tar.gz
-    $ cd ocnrm-1.0.0-bin
-    $ vi ./PseudoMf.properties
+    $ tar xvfz ./target/ocnrm-1.0.0-bin.tar.gz –C ~/
 
-check DISPATCHER_HOST, DISPATCHER_PORT
+You can choose your install directory instead of ~/.
 
-     > DISPATCHER_HOST=127.0.0.1
-     > DISPATCHER_PORT=6379
+ Configuration
+--------------------------
 
-ex.  
-if Redis Server( for ODENOS ) Address:Port is 192.168.1.100:6379 then
+Edit OCNRM.properties
 
-     DISPATCHER_HOST=192.168.1.100
+    $ vi ~/ocnrm-1.0.0-bin/OCNRM.properties
+
+Set redis-server’s host & port. For example, 
+
+     DISPATCHER_HOST=127.0.0.1
      DISPATCHER_PORT=6379
 
-check REQUEST_ODU_FLOW_URL, REQUEST_OCH_REPLACEMENT_PIECE_URL, 
-REQUEST_OCH_REPLACEMENT_PIECE_URL,REQUEST_OCH_REPLACEMENT_PIECE_URL
+Set pseudoMF’s REST access points. For example,
 
-     > REQUEST_ODU_FLOW_URL=http://127.0.0.1/DEMO/Generate/L1Path
-     > REQUEST_OCH_REPLACEMENT_PIECE_URL=http://127.0.0.1/DEMO/ID/L0Request
-     > REQUEST_ODU_REPLACEMENT_PIECE_URL=http://127.0.0.1/DEMO/ID/L1Request
-     > DELETE_ODU_FLOW_URL=http://127.0.0.1/DEMO/Delete/L1Path
-
-ex.  
-if PsudeMf Server Address:Port is 192.168.1.120:8081 then
-
-     REQUEST_ODU_FLOW_URL=http://192.168.1.120:8081/DEMO/Generate/L1Path
-     REQUEST_OCH_REPLACEMENT_PIECE_URL=http://192.168.1.120:8081/DEMO/ID/L0Request
-     REQUEST_ODU_REPLACEMENT_PIECE_URL=http://192.168.1.120:8081/DEMO/ID/L1Request
-     DELETE_ODU_FLOW_URL=http://192.168.1.120:8081/DEMO/Delete/L1Path
-
-check OFCTL_SEND_URL
-
-     > OFCTL_SEND_URL=http://127.0.0.1:8080/stats/flowentry
-
-ex.  
-if RYU OTN Extension ( of OpenFlow Controller ) Server Address:Port is 192.168.1.120:8080 then
-
-     OFCTL_SEND_URL=http://192.168.1.120:8080/stats/flowentry
+     REQUEST_ODU_FLOW_URL=http://127.0.0.1:80/DEMO/Generate/L1Path
+     REQUEST_OCH_REPLACEMENT_PIECE_URL=http://127.0.0.1:80/DEMO/ID/L0Request
+     REQUEST_ODU_REPLACEMENT_PIECE_URL=http://127.0.0.1:80/DEMO/ID/L1Request
+     DELETE_ODU_FLOW_URL=http://127.0.0.1:80/DEMO/Delete/L1Path
  
+set ryu-oe’s REST access point. For example,
+
+     OFCTL_SEND_URL=http://127.0.0.1:8080/stats/flowentry
+
 
  Starting OCNRM
 --------------------------
 
-    $ ./ocnrm_mn -s
+    $ ~/ocnrm-1.0.0-bin/ocnrm_mn -s
 
 
  Stopping OCNRM
 --------------------------
 
-    $ ./ocnrm_mn -q
+    ~/ocnrm-1.0.0-bin/ocnrm_mn -q
 
 
