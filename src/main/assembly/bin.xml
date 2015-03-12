@@ -11,6 +11,7 @@
         <include>LICENSE*</include>
         <include>NOTICE*</include>
         <include>ocnrm_mn</include>
+        <include>rm_startup.sh</include>
       </includes>
     </fileSet>
     <fileSet>
