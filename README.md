@@ -17,6 +17,7 @@ ODENOS 1.0.0 is required
 
     $ cd ~
     $ git clone https://github.com/o3project/ocnrm.git
+    $ cd ocnrm
     $ bash ./buld.sh
     $ tar xvfz ./target/ocnrm-1.0.0-bin.tar.gz –C ~/
 
@@ -27,7 +28,7 @@ You can choose your install directory instead of ~/.
 
 Edit OCNRM.properties
 
-    $ vi ~/ocnrm-1.0.0-bin/OCNRM.properties
+    $ vi ~/ocnrm-1.0.0/OCNRM.properties
 
 Set redis-server’s host & port. For example, 
 
@@ -49,12 +50,12 @@ set ryu-oe’s REST access point. For example,
  Starting OCNRM
 --------------------------
 
-    $ ~/ocnrm-1.0.0-bin/ocnrm_mn -s
+    $ ~/ocnrm-1.0.0/ocnrm_mn -s
 
 
  Stopping OCNRM
 --------------------------
 
-    ~/ocnrm-1.0.0-bin/ocnrm_mn -q
+    ~/ocnrm-1.0.0/ocnrm_mn -q
 
 
