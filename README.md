@@ -6,6 +6,8 @@ OCNRM works with ODENOS, PseudoMF(PseudoManagementFunctions) and RYU-OE(RYU OTN 
 
 Please see [starting guide](http://www.o3project.org/ja/fujitsu/docs/getting_started_OPT.pdf) for detailed instructions of "Opt-transport apps of O3 orchestrator & controller suite". 
 
+**Please also look at the** [**Web page that easily explained our OSS**](http://www.o3project.org/ja/fujitsu/index.html)  ... Only the Japanese page provided now.
+
  Environment
 --------------------------
 OS：Ubuntu 12.04.3(x64)  
