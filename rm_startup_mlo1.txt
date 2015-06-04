@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# ENV
+ODENOS_ADDRESS=127.0.0.1:10080
+RM_ADDRESS=127.0.0.1:44444
+
+# Component Manager build up
+echo "Component Manager build up"
+curl http://$RM_ADDRESS/demo/connectionmanager -X POST | python -mjson.tool
+sleep 1
+
+# Network Component build up
+echo "Network Component build up"
+curl http://$RM_ADDRESS/demo/nwcomponent -X POST -d '{"nwid":["L0","L1","L01", "networkcomponent2", "networkcomponent012"]}' | python -mjson.tool
+sleep 1
+
+# OptDriver build up
+echo "OptDriver build up"
+curl http://$RM_ADDRESS/demo/lgcomponent -X POST -d '{"type":"OptDriver","id":"optDriver"}' | python -mjson.tool
+sleep 1
+
+# OptDriver Connection
+echo "OptDriver Connection"
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"OptDriver","nwid":"L0","id":"optDriver","connection_type":"och"}' | python -mjson.tool
+sleep 1
+
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"OptDriver","nwid":"L1","id":"optDriver","connection_type":"odu"}' | python -mjson.tool
+sleep 1
+
+# LL build up (LL1)
+echo "LL build up (LL1)"
+curl http://$RM_ADDRESS/demo/lgcomponent -X POST -d '{"type":"LinkLayerizer","id":"layerized_1"}' | python -mjson.tool
+sleep 1
+
+# LL Connection (L0/L1/L01)
+echo "LL Connection (L0/L1/L01)"
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"LinkLayerizer","nwid":"L0","id":"layerized_1","connection_type":"lower"}' | python -mjson.tool
+sleep 1
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"LinkLayerizer","nwid":"L1","id":"layerized_1","connection_type":"upper"}' | python -mjson.tool
+sleep 1
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"LinkLayerizer","nwid":"L01","id":"layerized_1","connection_type":"layerized"}' | python -mjson.tool
+sleep 1
+
+# LL Boundary Set up (LL1 only)
+echo "LL Boundary Set up (LL1 only)"
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_1/settings/boundaries/1 -d '{"boundary_id":"1","lower_nw":"L0","lower_nw_node":"NW=SDN,NE=OPT1","lower_nw_port":"NW=SDN,NE=OPT1,Layer=OCh,TTP=1","upper_nw":"L1","upper_nw_node":"NW=SDN,NE=OPT1","upper_nw_port":"NW=SDN,NE=OPT1,Layer=ODU,CTP=1"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_1/settings/boundaries/2 -d '{"boundary_id":"2","lower_nw":"L0","lower_nw_node":"NW=SDN,NE=OPT1","lower_nw_port":"NW=SDN,NE=OPT1,Layer=OCh,TTP=2","upper_nw":"L1","upper_nw_node":"NW=SDN,NE=OPT1","upper_nw_port":"NW=SDN,NE=OPT1,Layer=ODU,CTP=2"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_1/settings/boundaries/3 -d '{"boundary_id":"3","lower_nw":"L0","lower_nw_node":"NW=SDN,NE=OPT2","lower_nw_port":"NW=SDN,NE=OPT2,Layer=OCh,TTP=1","upper_nw":"L1","upper_nw_node":"NW=SDN,NE=OPT2","upper_nw_port":"NW=SDN,NE=OPT2,Layer=ODU,CTP=1"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_1/settings/boundaries/4 -d '{"boundary_id":"4","lower_nw":"L0","lower_nw_node":"NW=SDN,NE=OPT2","lower_nw_port":"NW=SDN,NE=OPT2,Layer=OCh,TTP=2","upper_nw":"L1","upper_nw_node":"NW=SDN,NE=OPT2","upper_nw_port":"NW=SDN,NE=OPT2,Layer=ODU,CTP=2"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_1/settings/boundaries/5 -d '{"boundary_id":"5","lower_nw":"L0","lower_nw_node":"NW=SDN,NE=OPT4","lower_nw_port":"NW=SDN,NE=OPT4,Layer=OCh,TTP=1","upper_nw":"L1","upper_nw_node":"NW=SDN,NE=OPT4","upper_nw_port":"NW=SDN,NE=OPT4,Layer=ODU,CTP=1"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_1/settings/boundaries/6 -d '{"boundary_id":"6","lower_nw":"L0","lower_nw_node":"NW=SDN,NE=OPT4","lower_nw_port":"NW=SDN,NE=OPT4,Layer=OCh,TTP=2","upper_nw":"L1","upper_nw_node":"NW=SDN,NE=OPT4","upper_nw_port":"NW=SDN,NE=OPT4,Layer=ODU,CTP=2"}'
+
+# LL build up (LL2)
+echo "LL build up (LL1)"
+curl http://$RM_ADDRESS/demo/lgcomponent -X POST -d '{"type":"LinkLayerizer","id":"layerized_2"}' | python -mjson.tool
+sleep 1
+
+# LL Connection (L0/L1/L01)
+echo "LL Connection (L0/L1/L01)"
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"LinkLayerizer","nwid":"L01","id":"layerized_2","connection_type":"lower"}' | python -mjson.tool
+sleep 1
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"LinkLayerizer","nwid":"networkcomponent2","id":"layerized_2","connection_type":"upper"}' | python -mjson.tool
+sleep 1
+curl http://$RM_ADDRESS/demo/connections -X POST -d '{"type":"LinkLayerizer","nwid":"networkcomponent012","id":"layerized_2","connection_type":"layerized"}' | python -mjson.tool
+sleep 1
+
+# LL Boundary Set up (LL2 only)
+echo "LL Boundary Set up (LL2 only)"
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_2/settings/boundaries/1 -d '{"boundary_id":"1","lower_nw":"L01","lower_nw_node":"NW=SDN,NE=OPT1","lower_nw_port":"NW=SDN,NE=OPT1,Layer=ODU,TTP=1","upper_nw":"networkcomponent2","upper_nw_node":"NW=SDN,NE=PT1","upper_nw_port":"NW=SDN,NE=PT1,Layer=Ether,TTP=1"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_2/settings/boundaries/2 -d '{"boundary_id":"2","lower_nw":"L01","lower_nw_node":"NW=SDN,NE=OPT1","lower_nw_port":"NW=SDN,NE=OPT1,Layer=ODU,TTP=2","upper_nw":"networkcomponent2","upper_nw_node":"NW=SDN,NE=PT1","upper_nw_port":"NW=SDN,NE=PT1,Layer=Ether,TTP=2"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_2/settings/boundaries/3 -d '{"boundary_id":"3","lower_nw":"L01","lower_nw_node":"NW=SDN,NE=OPT2","lower_nw_port":"NW=SDN,NE=OPT2,Layer=ODU,TTP=1","upper_nw":"networkcomponent2","upper_nw_node":"NW=SDN,NE=PT2","upper_nw_port":"NW=SDN,NE=PT2,Layer=Ether,TTP=1"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_2/settings/boundaries/4 -d '{"boundary_id":"4","lower_nw":"L01","lower_nw_node":"NW=SDN,NE=OPT2","lower_nw_port":"NW=SDN,NE=OPT2,Layer=ODU,TTP=2","upper_nw":"networkcomponent2","upper_nw_node":"NW=SDN,NE=PT2","upper_nw_port":"NW=SDN,NE=PT2,Layer=Ether,TTP=2"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_2/settings/boundaries/5 -d '{"boundary_id":"5","lower_nw":"L01","lower_nw_node":"NW=SDN,NE=OPT4","lower_nw_port":"NW=SDN,NE=OPT4,Layer=ODU,TTP=1","upper_nw":"networkcomponent2","upper_nw_node":"NW=SDN,NE=PT3","upper_nw_port":"NW=SDN,NE=PT3,Layer=Ether,TTP=1"}'
+curl -X PUT http://$RM_ADDRESS/demo/layerizer/layerized_2/settings/boundaries/6 -d '{"boundary_id":"6","lower_nw":"L01","lower_nw_node":"NW=SDN,NE=OPT4","lower_nw_port":"NW=SDN,NE=OPT4,Layer=ODU,TTP=2","upper_nw":"networkcomponent2","upper_nw_node":"NW=SDN,NE=PT3","upper_nw_port":"NW=SDN,NE=PT3,Layer=Ether,TTP=2"}'
+
+# L2 Topology
+#echo "L2b Topology"
+
+#curl -X PUT http://$ODENOS_ADDRESS/networkcomponent2/topology -d '{"type":"Topology","version":"0","nodes":{"NW=SDN,NE=PT1":{"type":"Node","version":"2","node_id":"NW=SDN,NE=PT1","ports":{"NW=SDN,NE=PT1,Layer=Ether,TTP=1":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT1,Layer=Ether,TTP=1","node_id":"NW=SDN,NE=PT1","out_link":"","in_link":"","attributes":{}},"NW=SDN,NE=PT1,Layer=Ether,TTP=2":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT1,Layer=Ether,TTP=2","node_id":"NW=SDN,NE=PT1","out_link":"","in_link":"","attributes":{}}},"attributes":{}},"NW=SDN,NE=PT2":{"type":"Node","version":"2","node_id":"NW=SDN,NE=PT2","ports":{"NW=SDN,NE=PT2,Layer=Ether,TTP=1":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT2,Layer=Ether,TTP=1","node_id":"NW=SDN,NE=PT2","out_link":"","in_link":"","attributes":{}},"NW=SDN,NE=PT2,Layer=Ether,TTP=2":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT2,Layer=Ether,TTP=2","node_id":"NW=SDN,NE=PT2","out_link":"","in_link":"","attributes":{}}},"attributes":{}},"NW=SDN,NE=PT3":{"type":"Node","version":"2","node_id":"NW=SDN,NE=PT3","ports":{"NW=SDN,NE=PT3,Layer=Ether,TTP=1":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT3,Layer=Ether,TTP=1","node_id":"NW=SDN,NE=PT3","out_link":"","in_link":"","attributes":{}},"NW=SDN,NE=PT3,Layer=Ether,TTP=2":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT3,Layer=Ether,TTP=2","node_id":"NW=SDN,NE=PT3","out_link":"","in_link":"","attributes":{}}},"attributes":{}},},"links":{}}'
+sleep 1
+
+# L012 Topology
+#echo "L012b Topology"
+#curl -X PUT http://$ODENOS_ADDRESS/networkcomponent012/topology -d '{"type":"Topology","version":"0","nodes":{"NW=SDN,NE=PT1":{"type":"Node","version":"2","node_id":"NW=SDN,NE=PT1","ports":{"NW=SDN,NE=PT1,Layer=Ether,TTP=1":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT1,Layer=Ether,TTP=1","node_id":"NW=SDN,NE=PT1","out_link":"","in_link":"","attributes":{}},"NW=SDN,NE=PT1,Layer=Ether,TTP=2":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT1,Layer=Ether,TTP=2","node_id":"NW=SDN,NE=PT1","out_link":"","in_link":"","attributes":{}}},"attributes":{}},"NW=SDN,NE=PT2":{"type":"Node","version":"2","node_id":"NW=SDN,NE=PT2","ports":{"NW=SDN,NE=PT2,Layer=Ether,TTP=1":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT2,Layer=Ether,TTP=1","node_id":"NW=SDN,NE=PT2","out_link":"","in_link":"","attributes":{}},"NW=SDN,NE=PT2,Layer=Ether,TTP=2":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT2,Layer=Ether,TTP=2","node_id":"NW=SDN,NE=PT2","out_link":"","in_link":"","attributes":{}}},"attributes":{}},"NW=SDN,NE=PT3":{"type":"Node","version":"2","node_id":"NW=SDN,NE=PT3","ports":{"NW=SDN,NE=PT3,Layer=Ether,TTP=1":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT3,Layer=Ether,TTP=1","node_id":"NW=SDN,NE=PT3","out_link":"","in_link":"","attributes":{}},"NW=SDN,NE=PT3,Layer=Ether,TTP=2":{"type":"Port","version":"2","port_id":"NW=SDN,NE=PT3,Layer=Ether,TTP=2","node_id":"NW=SDN,NE=PT3","out_link":"","in_link":"","attributes":{}}},"attributes":{}},},"links":{}}'
+
+
